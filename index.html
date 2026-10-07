@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KasirKu - Sistem Kasir</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">🛒</div>
+
+            <div>
+                <h2>KasirKu</h2>
+                <small>Point of Sale</small>
+            </div>
+        </div>
+
+        <nav>
+
+            <button class="nav-btn active" data-page="dashboard">
+                🏠
+                <span>Dashboard</span>
+            </button>
+
+            <button class="nav-btn" data-page="products">
+                📦
+                <span>Produk</span>
+            </button>
+
+            <button class="nav-btn" data-page="pos">
+                🛒
+                <span>Kasir</span>
+            </button>
+
+            <button class="nav-btn" data-page="history">
+                🧾
+                <span>Riwayat</span>
+            </button>
+
+            <button class="nav-btn" data-page="report">
+                📊
+                <span>Laporan</span>
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <button onclick="resetData()" class="reset-btn">
+                🔄 Reset Data
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div>
+                <h1>Sistem Kasir</h1>
+                <p>Kelola penjualan dengan mudah</p>
+            </div>
+
+            <div class="date-box">
+                📅
+                <span id="currentDate"></span>
+            </div>
+
+        </header>
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section id="dashboard" class="page active">
+
+            <div class="page-title">
+                <div>
+                    <h2>Dashboard</h2>
+                    <p>Ringkasan toko hari ini</p>
+                </div>
+
+                <button class="primary-btn" onclick="showPage('pos')">
+                    + Transaksi Baru
+                </button>
+            </div>
+
+
+            <div class="stats">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+                        💰
+                    </div>
+
+                    <div>
+                        <span>Total Pendapatan</span>
+                        <strong id="dashRevenue">Rp0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        🧾
+                    </div>
+
+                    <div>
+                        <span>Total Transaksi</span>
+                        <strong id="dashTransactions">0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon purple">
+                        📦
+                    </div>
+
+                    <div>
+                        <span>Barang Terjual</span>
+                        <strong id="dashItems">0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+                        🏷️
+                    </div>
+
+                    <div>
+                        <span>Total Produk</span>
+                        <strong id="dashProducts">0</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h3>Stok Rendah</h3>
+                            <p>Produk yang perlu diperhatikan</p>
+                        </div>
+                    </div>
+
+                    <div id="lowStock"></div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h3>Informasi Sistem</h3>
+                            <p>Data aplikasi</p>
+                        </div>
+                    </div>
+
+                    <div class="info-list">
+
+                        <div>
+                            <span>Penyimpanan</span>
+                            <b>Local Storage</b>
+                        </div>
+
+                        <div>
+                            <span>Database</span>
+                            <b>Tidak digunakan</b>
+                        </div>
+
+                        <div>
+                            <span>Status</span>
+                            <b class="status-online">● Aktif</b>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= PRODUK ================= -->
+
+        <section id="products" class="page">
+
+            <div class="page-title">
+
+                <div>
+                    <h2>Kelola Produk</h2>
+                    <p>Tambah dan kelola stok produk</p>
+                </div>
+
+                <button class="primary-btn" onclick="openProduct()">
+                    + Tambah Produk
+                </button>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="toolbar">
+
+                    <input
+                        type="text"
+                        id="productSearch"
+                        placeholder="🔍 Cari produk..."
+                    >
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>No</th>
+                                <th>Produk</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th>Aksi</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="productTable"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= KASIR ================= -->
+
+        <section id="pos" class="page">
+
+            <div class="page-title">
+
+                <div>
+                    <h2>Kasir</h2>
+                    <p>Buat transaksi penjualan</p>
+                </div>
+
+            </div>
+
+
+            <div class="cashier-layout">
+
+
+                <!-- PRODUK -->
+                <div class="panel product-panel">
+
+                    <div class="toolbar">
+
+                        <input
+                            type="text"
+                            id="posSearch"
+                            placeholder="🔍 Cari produk..."
+                        >
+
+                    </div>
+
+
+                    <div id="posProducts" class="product-grid"></div>
+
+                </div>
+
+
+                <!-- KERANJANG -->
+                <div class="panel cart-panel">
+
+                    <div class="cart-title">
+
+                        <div>
+                            <h3>Keranjang</h3>
+                            <small>Daftar pembelian</small>
+                        </div>
+
+                        <button
+                            class="clear-btn"
+                            onclick="clearCart()"
+                        >
+                            Kosongkan
+                        </button>
+
+                    </div>
+
+
+                    <div id="cartItems" class="cart-items"></div>
+
+
+                    <div class="summary">
+
+                        <div>
+                            <span>Subtotal</span>
+                            <b id="subtotal">Rp0</b>
+                        </div>
+
+                        <div class="input-row">
+
+                            <span>Diskon</span>
+
+                            <input
+                                type="number"
+                                id="discountInput"
+                                min="0"
+                                value="0"
+                            >
+
+                        </div>
+
+                        <div>
+                            <span>Nilai Diskon</span>
+                            <b id="discountValue">Rp0</b>
+                        </div>
+
+                        <div class="input-row">
+
+                            <span>Pajak (%)</span>
+
+                            <input
+                                type="number"
+                                id="taxInput"
+                                min="0"
+                                max="100"
+                                value="0"
+                            >
+
+                        </div>
+
+                        <div>
+                            <span>Pajak</span>
+                            <b id="taxValue">Rp0</b>
+                        </div>
+
+                        <div class="grand-total">
+
+                            <span>Total</span>
+
+                            <strong id="grandTotal">
+                                Rp0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        class="pay-btn"
+                        onclick="openPayment()"
+                    >
+                        💳 Bayar Sekarang
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= RIWAYAT ================= -->
+
+        <section id="history" class="page">
+
+            <div class="page-title">
+
+                <div>
+                    <h2>Riwayat Transaksi</h2>
+                    <p>Daftar transaksi yang telah dilakukan</p>
+                </div>
+
+                <button
+                    class="danger-btn"
+                    onclick="deleteAllHistory()"
+                >
+                    Hapus Semua
+                </button>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="toolbar">
+
+                    <input
+                        type="text"
+                        id="historySearch"
+                        placeholder="🔍 Cari nomor transaksi..."
+                    >
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Nomor</th>
+                                <th>Tanggal</th>
+                                <th>Item</th>
+                                <th>Total</th>
+                                <th>Aksi</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="historyTable"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= LAPORAN ================= -->
+
+        <section id="report" class="page">
+
+            <div class="page-title">
+
+                <div>
+                    <h2>Laporan Penjualan</h2>
+                    <p>Ringkasan seluruh penjualan</p>
+                </div>
+
+            </div>
+
+
+            <div class="stats">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+                        💰
+                    </div>
+
+                    <div>
+                        <span>Pendapatan</span>
+                        <strong id="reportRevenue">Rp0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        🧾
+                    </div>
+
+                    <div>
+                        <span>Transaksi</span>
+                        <strong id="reportTx">0</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon purple">
+                        📦
+                    </div>
+
+                    <div>
+                        <span>Barang Terjual</span>
+                        <strong id="reportItems">0</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <h3>Produk Terlaris</h3>
+                        <p>Produk dengan jumlah penjualan terbanyak</p>
+                    </div>
+
+                </div>
+
+                <div id="bestProducts"></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= MODAL PRODUK ================= -->
+
+    <div id="productModal" class="modal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <div>
+                    <h3 id="modalProductTitle">Tambah Produk</h3>
+                    <p>Masukkan informasi produk</p>
+                </div>
+
+                <button onclick="closeModal('productModal')">
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="productForm">
+
+                <input type="hidden" id="editId">
+
+                <label>
+                    Nama Produk
+                </label>
+
+                <input
+                    type="text"
+                    id="pName"
+                    required
+                >
+
+
+                <label>
+                    Harga
+                </label>
+
+                <input
+                    type="number"
+                    id="pPrice"
+                    min="0"
+                    required
+                >
+
+
+                <label>
+                    Stok
+                </label>
+
+                <input
+                    type="number"
+                    id="pStock"
+                    min="0"
+                    required
+                >
+
+
+                <label>
+                    Kategori
+                </label>
+
+                <input
+                    type="text"
+                    id="pCategory"
+                    placeholder="Contoh: Makanan"
+                >
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        onclick="closeModal('productModal')"
+                    >
+                        Batal
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Simpan
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= MODAL PEMBAYARAN ================= -->
+
+    <div id="paymentModal" class="modal">
+
+        <div class="modal-box payment-box">
+
+            <div class="modal-header">
+
+                <div>
+                    <h3>Pembayaran</h3>
+                    <p>Selesaikan transaksi</p>
+                </div>
+
+                <button onclick="closeModal('paymentModal')">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="payment-total">
+
+                <span>Total yang harus dibayar</span>
+
+                <strong id="payTotal">
+                    Rp0
+                </strong>
+
+            </div>
+
+
+            <label>
+                Uang Pembayaran
+            </label>
+
+            <input
+                type="number"
+                id="payAmount"
+                placeholder="Masukkan jumlah uang"
+            >
+
+
+            <div class="change-box">
+
+                <span>Kembalian</span>
+
+                <strong id="payChange">
+                    Rp0
+                </strong>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    class="secondary-btn"
+                    onclick="closeModal('paymentModal')"
+                >
+                    Batal
+                </button>
+
+                <button
+                    class="primary-btn"
+                    onclick="completeTransaction()"
+                >
+                    Selesaikan Transaksi
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= MODAL DETAIL ================= -->
+
+    <div id="detailModal" class="modal">
+
+        <div class="modal-box">
+
+            <div class="modal-header">
+
+                <h3>Detail Transaksi</h3>
+
+                <button onclick="closeModal('detailModal')">
+                    ×
+                </button>
+
+            </div>
+
+
+            <div id="detailContent"></div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    class="secondary-btn"
+                    onclick="closeModal('detailModal')"
+                >
+                    Tutup
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="js/script.js"></script>
+
+</body>
+</html> 
